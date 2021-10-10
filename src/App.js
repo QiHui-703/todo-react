@@ -2,6 +2,9 @@ import "./App.css";
 import Homepage from "./component/homepage";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
+import { app } from "./utils/init.js";
+
+console.log(app);
 
 const theme = createTheme({
   typography: {
