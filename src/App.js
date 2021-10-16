@@ -2,9 +2,8 @@ import "./App.css";
 import Homepage from "./component/homepage";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
-import { app } from "./utils/init.js";
-
-console.log(app);
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Main from "./component/main";
 
 const theme = createTheme({
   typography: {
@@ -25,9 +24,19 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <div className="App">
-        <Homepage />
-      </div>
+      <Router>
+        <div className="App">
+          <Switch>
+            <Route exact path="/">
+              <Homepage />
+            </Route>
+
+            <Route path="/main">
+              <Main />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     </ThemeProvider>
   );
 }
