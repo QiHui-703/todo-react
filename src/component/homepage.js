@@ -2,6 +2,8 @@ import { Button, Grid, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import Logo from "../images/todo-logo-plain.png";
+import { useHistory } from "react-router-dom";
+import { useAuthStateChecker } from "./authState";
 
 //firebase
 import {
@@ -11,7 +13,6 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../utils/init";
-import { useHistory } from "react-router-dom";
 
 function delay(delayInms) {
   return new Promise((resolve) => {
@@ -26,20 +27,9 @@ function Homepage() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isFetchingAuthDetails, setIsFetchingAuthDetails] = useState(true);
+  const [isFetchingAuthDetails, setIsFetchingAuthDetails] = useState(false);
 
   const history = useHistory();
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      console.log("there is a user");
-      // window.location.replace("http://localhost:3000/main");
-      history.push("/main");
-    } else {
-      history.push("/");
-      setIsFetchingAuthDetails(false);
-    }
-  });
 
   return !isFetchingAuthDetails ? (
     <Grid
@@ -85,6 +75,7 @@ function Homepage() {
         </Grid>
       </Grid>
 
+      {/* Existing user login */}
       <Grid item>
         {formType === "existingUser" ? (
           <Grid
@@ -130,11 +121,10 @@ function Homepage() {
                 disableElevation
                 loading={loading}
                 onClick={() => {
+                  setLoading(true);
                   signInWithEmailAndPassword(auth, emailAddress, password)
                     .then((userCredential) => {
-                      console.log("success");
-                      // redirect to main page
-                      // window.location.replace("http://localhost:3000/main");
+                      history.push("/main");
                       setLoading(false);
                     })
                     .catch((error) => {
@@ -151,6 +141,7 @@ function Homepage() {
             </Grid>
           </Grid>
         ) : (
+          // New user sign up
           <Grid
             container
             direction="column"
@@ -200,16 +191,13 @@ function Homepage() {
                   createUserWithEmailAndPassword(auth, emailAddress, password)
                     .then(async (userCredential) => {
                       const userId = userCredential.user.uid;
-                      console.log(userCredential);
                       const docRef = doc(db, "Users", userId);
                       let docSnap = await getDoc(docRef);
                       while (!docSnap.exists()) {
                         await delay(1000);
                         docSnap = await getDoc(docRef);
-                        console.log("document doesn't exist yet");
                       }
-                      // redirect to main page
-                      // window.location.replace("http://localhost:3000/main");
+                      history.push("/main");
                       setLoading(false);
                     })
                     .catch((error) => {
