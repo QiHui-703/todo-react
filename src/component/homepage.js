@@ -3,7 +3,6 @@ import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import Logo from "../images/todo-logo-plain.png";
 import { useHistory } from "react-router-dom";
-import { useAuthStateChecker } from "./authState";
 
 //firebase
 import {
