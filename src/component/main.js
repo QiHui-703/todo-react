@@ -1,45 +1,26 @@
-import {
-  Container,
-  Grid,
-  TextField,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { Container, Grid, TextField, CircularProgress } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "@mui/lab";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import RadioButtonUncheckedRoundedIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
-import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import RadioButtonCheckedRoundedIcon from "@mui/icons-material/RadioButtonCheckedRounded";
-import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
+import OpenItemMapping from "./openItemMapping";
+import CompletedItemMapping from "./completedItemMapping";
 
 import { signOut } from "firebase/auth";
-
 import { auth, db } from "../utils/init";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, addDoc, query, onSnapshot } from "firebase/firestore";
 
 import EditPencil from "../images/inactive-pencil.png";
+import DeletedItemMapping from "./deletedItemMapping";
 
 // font-family: 'Sacramento', cursive;
 const useStyle = makeStyles((theme) => ({
   root: {
     minHeight: "100vh",
-    maxWidth: "70vw",
+    maxWidth: "100vw",
   },
   pageTitle: {
     fontFamily: "Sacramento",
@@ -63,44 +44,23 @@ function Main() {
   const [user, loading, error] = useAuthState(auth);
   const [newInputContent, setNewInputContent] = useState("");
   const [submittingData, setSubmittingData] = useState(false);
-  const [markAsCompletedLoading, setMarkAsCompletedLoading] = useState(false);
-  const [markAsPendingLoading, setMarkAsPendingLoading] = useState(false);
-  const [markAsDeletedLoading, setMarkAsDeletedLoading] = useState(false);
-  const [markAsPermanentDeletedLoading, setMarkAsPermanentDeletedLoading] =
-    useState(false);
 
   // Add a new document with a generated id.
   const addDocIntoTodos = async (inputValue, uid) => {
     setSubmittingData(true);
     await addDoc(collection(db, `Users/${uid}/Todos`), {
       details: inputValue,
+      itemCreationDate: new Date(),
+      itemLastUpdatedDate: new Date(),
+      itemStatus: "pending",
     });
-    // await getData(uid);
     setSubmittingData(false);
   };
-
-  //Fetch user's todos array from firestore
-  // const getData = async (uid) => {
-  //   const querySnapshot = await getDocs(collection(db, `Users/${uid}/Todos`));
-  //   let myArr = [];
-  //   setTodos([]);
-  //   querySnapshot.forEach(async (doc) => {
-  //     let obj = {};
-  //     obj = doc.data();
-  //     obj.id = doc.id;
-  //     myArr.push(obj);
-  //     setTodos((arr) => [...arr, obj]);
-  //   });
-  //   setFetchingData(false);
-  // };
 
   //First time mapping after launching main page
   useEffect(() => {
     if (user) {
-      console.log("use effect running");
       let uid = auth.currentUser?.uid;
-      // setFetchingData(true);
-      // getData(uid);
       const q = query(collection(db, `Users/${uid}/Todos`));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         setFetchingData(true);
@@ -210,77 +170,7 @@ function Main() {
 
           {todos.map((item, index) => {
             return item.itemStatus === "pending" ? (
-              <Grid
-                container
-                direction="row"
-                justifyContent="center"
-                alignContent="center"
-                key={item.id}
-              >
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    loading={markAsCompletedLoading}
-                    disabled={markAsDeletedLoading}
-                    onClick={async (e) => {
-                      setMarkAsCompletedLoading(true);
-
-                      console.log(e);
-                      let uid = auth.currentUser?.uid;
-                      let itemDetailsReference = doc(
-                        db,
-                        `Users/${uid}/Todos`,
-                        `${item.id}`
-                      );
-                      await updateDoc(itemDetailsReference, {
-                        itemStatus: "completed",
-                      });
-                      // await getData(uid);
-
-                      setMarkAsCompletedLoading(false);
-                    }}
-                  >
-                    <RadioButtonUncheckedRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-                <Grid item xs={6} ml={2}>
-                  <p
-                    className={`${
-                      markAsCompletedLoading || markAsDeletedLoading
-                        ? `${classes.loadingStyles}`
-                        : ""
-                    }`}
-                  >
-                    {item.details}
-                  </p>
-                </Grid>
-
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    disabled={markAsCompletedLoading}
-                    loading={markAsDeletedLoading}
-                    onClick={async () => {
-                      console.log("deleted");
-                      setMarkAsDeletedLoading(true);
-                      let uid = auth.currentUser?.uid;
-                      let itemDetailsReference = doc(
-                        db,
-                        `Users/${uid}/Todos`,
-                        `${item.id}`
-                      );
-
-                      await updateDoc(itemDetailsReference, {
-                        itemStatus: "deleted",
-                      });
-                      // await getData(uid);
-                      setMarkAsDeletedLoading(false);
-                    }}
-                  >
-                    <DeleteOutlineRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-              </Grid>
+              <OpenItemMapping item={item} key={item.id} />
             ) : (
               ""
             );
@@ -297,77 +187,7 @@ function Main() {
 
           {todos.map((item, index) => {
             return item.itemStatus === "completed" ? (
-              <Grid
-                container
-                direction="row"
-                justifyContent="center"
-                alignContent="center"
-                key={item.id}
-              >
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    loading={markAsPendingLoading}
-                    disabled={markAsDeletedLoading}
-                    onClick={async (e) => {
-                      setMarkAsPendingLoading(true);
-
-                      console.log(e);
-                      let uid = auth.currentUser?.uid;
-                      let itemDetailsReference = doc(
-                        db,
-                        `Users/${uid}/Todos`,
-                        `${item.id}`
-                      );
-                      await updateDoc(itemDetailsReference, {
-                        itemStatus: "pending",
-                      });
-                      // await getData(uid);
-
-                      setMarkAsPendingLoading(false);
-                    }}
-                  >
-                    <ReplayRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-                <Grid item xs={6} ml={2}>
-                  <p
-                    className={`${
-                      markAsPendingLoading || markAsDeletedLoading
-                        ? `${classes.loadingStyles}`
-                        : ""
-                    }`}
-                  >
-                    {item.details}
-                  </p>
-                </Grid>
-
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    disabled={markAsPendingLoading}
-                    loading={markAsDeletedLoading}
-                    onClick={async () => {
-                      console.log("deleted");
-                      setMarkAsDeletedLoading(true);
-                      let uid = auth.currentUser?.uid;
-                      let itemDetailsReference = doc(
-                        db,
-                        `Users/${uid}/Todos`,
-                        `${item.id}`
-                      );
-
-                      await updateDoc(itemDetailsReference, {
-                        itemStatus: "deleted",
-                      });
-                      // await getData(uid);
-                      setMarkAsDeletedLoading(false);
-                    }}
-                  >
-                    <DeleteOutlineRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-              </Grid>
+              <CompletedItemMapping item={item} key={item.id} />
             ) : (
               ""
             );
@@ -384,75 +204,7 @@ function Main() {
 
           {todos.map((item, index) => {
             return item.itemStatus === "deleted" ? (
-              <Grid
-                container
-                direction="row"
-                justifyContent="center"
-                alignContent="center"
-                key={item.id}
-              >
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    loading={markAsPendingLoading}
-                    disabled={markAsPermanentDeletedLoading}
-                    onClick={async (e) => {
-                      setMarkAsPendingLoading(true);
-
-                      console.log(e);
-                      let uid = auth.currentUser?.uid;
-                      let itemDetailsReference = doc(
-                        db,
-                        `Users/${uid}/Todos`,
-                        `${item.id}`
-                      );
-                      await updateDoc(itemDetailsReference, {
-                        itemStatus: "pending",
-                      });
-                      // await getData(uid);
-
-                      setMarkAsPendingLoading(false);
-                    }}
-                  >
-                    <ReplayRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-                <Grid item xs={6} ml={2}>
-                  <p
-                    className={`${
-                      markAsPendingLoading || markAsPermanentDeletedLoading
-                        ? `${classes.loadingStyles}`
-                        : ""
-                    }`}
-                  >
-                    {item.details}
-                  </p>
-                </Grid>
-
-                <Grid item alignSelf="center">
-                  <LoadingButton
-                    color="inherit"
-                    disabled={markAsPendingLoading}
-                    loading={markAsPermanentDeletedLoading}
-                    onClick={async () => {
-                      console.log("permanently deleted");
-                      setMarkAsPermanentDeletedLoading(true);
-                      let uid = auth.currentUser?.uid;
-                      // let itemDetailsReference = doc(
-                      //   db,
-                      //   `Users/${uid}/Todos`,
-                      //   `${item.id}`
-                      // );
-
-                      await deleteDoc(doc(db, `Users/${uid}/Todos`, item.id));
-                      // await getData(uid);
-                      setMarkAsPermanentDeletedLoading(false);
-                    }}
-                  >
-                    <DeleteForeverRoundedIcon />
-                  </LoadingButton>
-                </Grid>
-              </Grid>
+              <DeletedItemMapping item={item} key={item.id} />
             ) : (
               ""
             );

@@ -1,8 +1,11 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useState } from "react";
-import Logo from "../images/todo-logo-plain.png";
+
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import Logo from "../images/todo-logo-plain.png";
 
 //firebase
 import {
@@ -26,11 +29,22 @@ function Homepage() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isFetchingAuthDetails, setIsFetchingAuthDetails] = useState(false);
+  const [user, userLoading, error] = useAuthState(auth);
 
   const history = useHistory();
 
-  return !isFetchingAuthDetails ? (
+  useEffect(() => {
+    if (user) {
+      history.push("/main");
+    } else if (userLoading) {
+      console.log("is loading");
+      return;
+    } else {
+      console.log("no user found");
+    }
+  }, [user, userLoading]);
+
+  return !userLoading ? (
     <Grid
       container
       direction="column"
@@ -216,7 +230,16 @@ function Homepage() {
       </Grid>
     </Grid>
   ) : (
-    <div />
+    <Grid
+      container
+      justifyContent="center"
+      alignContent="center"
+      sx={{ minHeight: "100vh" }}
+    >
+      <Grid item>
+        <CircularProgress />
+      </Grid>
+    </Grid>
   );
 }
 
