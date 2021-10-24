@@ -31,10 +31,8 @@ function OpenItemMapping(props) {
           color="inherit"
           loading={markAsCompletedLoading}
           disabled={markAsDeletedLoading}
-          onClick={async (e) => {
+          onClick={async () => {
             setMarkAsCompletedLoading(true);
-
-            console.log(e);
             let uid = auth.currentUser?.uid;
             let itemDetailsReference = doc(
               db,

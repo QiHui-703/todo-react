@@ -11,21 +11,31 @@ import CompletedItemMapping from "./completedItemMapping";
 
 import { signOut } from "firebase/auth";
 import { auth, db } from "../utils/init";
-import { collection, addDoc, query, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 
 import EditPencil from "../images/inactive-pencil.png";
+import ActiveEditPencil from "../images/active-pencil.png";
 import DeletedItemMapping from "./deletedItemMapping";
 
 // font-family: 'Sacramento', cursive;
-const useStyle = makeStyles((theme) => ({
+const useStyle = makeStyles(() => ({
   root: {
     minHeight: "100vh",
-    maxWidth: "100vw",
+    maxWidth: "90vw",
   },
   pageTitle: {
     fontFamily: "Sacramento",
-    fontSize: "5rem",
     borderBottomStyle: "groove",
+    color: "#0C1B33",
+  },
+  categoryTitleStyle: {
+    color: "#439A86",
   },
   editPencilStyle: {
     width: "50px",
@@ -41,9 +51,10 @@ function Main() {
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [todos, setTodos] = useState([]);
   const [fetchingData, setFetchingData] = useState(false);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [newInputContent, setNewInputContent] = useState("");
   const [submittingData, setSubmittingData] = useState(false);
+  const [userInputFieldOnFocus, setUserInputFieldOnFocus] = useState(false);
 
   // Add a new document with a generated id.
   const addDocIntoTodos = async (inputValue, uid) => {
@@ -61,7 +72,10 @@ function Main() {
   useEffect(() => {
     if (user) {
       let uid = auth.currentUser?.uid;
-      const q = query(collection(db, `Users/${uid}/Todos`));
+      const q = query(
+        collection(db, `Users/${uid}/Todos`),
+        orderBy("itemLastUpdatedDate", "desc")
+      );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         setFetchingData(true);
         let myArr = [];
@@ -111,7 +125,12 @@ function Main() {
       </Grid>
 
       <Grid container>
-        <Grid item xs={12} textAlign="center">
+        <Grid
+          item
+          xs={12}
+          textAlign="center"
+          sx={{ fontSize: { xs: "1.5rem", md: "3rem" } }}
+        >
           <h1 className={classes.pageTitle}>todos</h1>
         </Grid>
       </Grid>
@@ -119,52 +138,79 @@ function Main() {
       <Grid container direction="row">
         <Grid
           item
-          container
           sx={{
             width: "100%",
             maxWidth: "100%",
           }}
-          justifyContent="center"
-          alignItems="center"
-          direction="row"
         >
-          <Grid item>
-            <img
-              src={EditPencil}
-              className={classes.editPencilStyle}
-              alt="Edit's pencil icon"
-            ></img>
-          </Grid>
-          <Grid item xs={7} ml={3}>
-            <TextField
-              disabled={submittingData}
-              label="Type here..."
-              id="standard-size-small"
-              size="small"
-              fullWidth
-              variant="outlined"
-              onChange={(e) => setNewInputContent(e.target.value)}
-            />
-          </Grid>
-          <Grid item>
-            <LoadingButton
-              loading={submittingData}
-              color="inherit"
-              onClick={() => {
-                let uid = auth.currentUser?.uid;
-                addDocIntoTodos(newInputContent, uid);
+          <form
+            autoComplete="off"
+            onSubmit={() => {
+              let uid = auth.currentUser?.uid;
+              addDocIntoTodos(newInputContent, uid);
+              setUserInputFieldOnFocus(false);
+            }}
+          >
+            <Grid
+              container
+              sx={{
+                width: "100%",
+                maxWidth: "100%",
               }}
+              justifyContent="center"
+              alignItems="center"
+              direction="row"
             >
-              <SendRoundedIcon />
-            </LoadingButton>
-          </Grid>
+              <Grid item>
+                <img
+                  src={userInputFieldOnFocus ? ActiveEditPencil : EditPencil}
+                  className={classes.editPencilStyle}
+                  alt="Edit's pencil icon"
+                ></img>
+              </Grid>
+              <Grid item xs={7} ml={3}>
+                <TextField
+                  disabled={submittingData}
+                  label="Type here..."
+                  id="standard-size-small"
+                  size="small"
+                  fullWidth
+                  variant="outlined"
+                  type="text"
+                  onChange={(e) => {
+                    setNewInputContent(e.target.value);
+                  }}
+                  onFocus={() => {
+                    setUserInputFieldOnFocus(true);
+                  }}
+                  onBlur={() => {
+                    setUserInputFieldOnFocus(false);
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  loading={submittingData}
+                  type="submit"
+                  color="inherit"
+                  onClick={() => {
+                    let uid = auth.currentUser?.uid;
+                    addDocIntoTodos(newInputContent, uid);
+                    setUserInputFieldOnFocus(false);
+                  }}
+                >
+                  <SendRoundedIcon />
+                </LoadingButton>
+              </Grid>
+            </Grid>
+          </form>
         </Grid>
 
         {/* Open/Pending item */}
         <Grid container direction="column">
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={8} mt={3}>
-              <h3>Open items</h3>
+              <h3 className={classes.categoryTitleStyle}>Open items</h3>
             </Grid>
           </Grid>
 
@@ -181,7 +227,7 @@ function Main() {
         <Grid container direction="column">
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={8} mt={3}>
-              <h3>Completed items</h3>
+              <h3 className={classes.categoryTitleStyle}>Completed items</h3>
             </Grid>
           </Grid>
 
@@ -198,7 +244,7 @@ function Main() {
         <Grid container direction="column">
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={8} mt={3}>
-              <h3>Deleted items</h3>
+              <h3 className={classes.categoryTitleStyle}>Deleted items</h3>
             </Grid>
           </Grid>
 

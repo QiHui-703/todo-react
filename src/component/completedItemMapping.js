@@ -32,10 +32,8 @@ function CompletedItemMapping(props) {
           color="inherit"
           loading={markAsPendingLoading}
           disabled={markAsDeletedLoading}
-          onClick={async (e) => {
+          onClick={async () => {
             setMarkAsPendingLoading(true);
-
-            console.log(e);
             let uid = auth.currentUser?.uid;
             let itemDetailsReference = doc(
               db,

@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Popover, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
 import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
@@ -19,6 +19,18 @@ function DeletedItemMapping(props) {
   const [markAsPendingLoading, setMarkAsPendingLoading] = useState(false);
   const [markAsPermanentDeletedLoading, setMarkAsPermanentDeletedLoading] =
     useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    console.log(event);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   return (
     <Grid
@@ -33,10 +45,8 @@ function DeletedItemMapping(props) {
           color="inherit"
           loading={markAsPendingLoading}
           disabled={markAsPermanentDeletedLoading}
-          onClick={async (e) => {
+          onClick={async () => {
             setMarkAsPendingLoading(true);
-
-            console.log(e);
             let uid = auth.currentUser?.uid;
             let itemDetailsReference = doc(
               db,
@@ -86,9 +96,35 @@ function DeletedItemMapping(props) {
             // await getData(uid);
             setMarkAsPermanentDeletedLoading(false);
           }}
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
         >
           <DeleteForeverRoundedIcon />
         </LoadingButton>
+      </Grid>
+      <Grid item>
+        <Popover
+          id="mouse-over-popover"
+          sx={{
+            pointerEvents: "none",
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+        >
+          <Typography sx={{ p: 1, fontSize: "0.9rem", fontWeight: "300" }}>
+            Permanently delete
+          </Typography>
+        </Popover>
       </Grid>
     </Grid>
   );
