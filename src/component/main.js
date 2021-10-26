@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import OpenItemMapping from "./openItemMapping";
 import CompletedItemMapping from "./completedItemMapping";
+import DeletedItemMapping from "./deletedItemMapping";
 
 import { signOut } from "firebase/auth";
 import { auth, db } from "../utils/init";
@@ -21,7 +22,6 @@ import {
 
 import EditPencil from "../images/inactive-pencil.png";
 import ActiveEditPencil from "../images/active-pencil.png";
-import DeletedItemMapping from "./deletedItemMapping";
 
 // font-family: 'Sacramento', cursive;
 const useStyle = makeStyles(() => ({
@@ -38,7 +38,7 @@ const useStyle = makeStyles(() => ({
     color: "#439A86",
   },
   editPencilStyle: {
-    width: "50px",
+    width: "45px",
   },
   loadingStyles: {
     color: "#5E503F",
@@ -166,9 +166,9 @@ function Main() {
                   src={userInputFieldOnFocus ? ActiveEditPencil : EditPencil}
                   className={classes.editPencilStyle}
                   alt="Edit's pencil icon"
-                ></img>
+                />
               </Grid>
-              <Grid item xs={7} ml={3}>
+              <Grid item xs={6} md={7} ml={1}>
                 <TextField
                   disabled={submittingData}
                   label="Type here..."
@@ -208,8 +208,8 @@ function Main() {
 
         {/* Open/Pending item */}
         <Grid container direction="column">
-          <Grid container direction="row" justifyContent="center">
-            <Grid item xs={8} mt={3}>
+          <Grid container item direction="row" justifyContent="center">
+            <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Open items</h3>
             </Grid>
           </Grid>
@@ -226,7 +226,7 @@ function Main() {
         {/* Completed item */}
         <Grid container direction="column">
           <Grid container direction="row" justifyContent="center">
-            <Grid item xs={8} mt={3}>
+            <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Completed items</h3>
             </Grid>
           </Grid>
@@ -243,7 +243,7 @@ function Main() {
         {/* Deleted item */}
         <Grid container direction="column">
           <Grid container direction="row" justifyContent="center">
-            <Grid item xs={8} mt={3}>
+            <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Deleted items</h3>
             </Grid>
           </Grid>

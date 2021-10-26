@@ -36,9 +36,12 @@ function DeletedItemMapping(props) {
     <Grid
       container
       direction="row"
-      justifyContent="center"
       alignContent="center"
       key={props.item.id}
+      sx={{
+        justifyContent: { xs: "space-around", md: "center" },
+        fontSize: { xs: "0.9rem" },
+      }}
     >
       <Grid item alignSelf="center">
         <LoadingButton
@@ -65,7 +68,7 @@ function DeletedItemMapping(props) {
           <ReplayRoundedIcon />
         </LoadingButton>
       </Grid>
-      <Grid item xs={6} ml={2}>
+      <Grid item xs={6} sx={{ overflowWrap: "break-word" }}>
         <p
           className={`${
             markAsPendingLoading || markAsPermanentDeletedLoading
@@ -102,11 +105,17 @@ function DeletedItemMapping(props) {
           <DeleteForeverRoundedIcon />
         </LoadingButton>
       </Grid>
-      <Grid item>
+      <Grid
+        item
+        sx={{
+          display: { xs: "none" },
+        }}
+      >
         <Popover
           id="mouse-over-popover"
           sx={{
             pointerEvents: "none",
+            display: { xs: "none", md: "block" },
           }}
           open={open}
           anchorEl={anchorEl}

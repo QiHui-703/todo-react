@@ -23,9 +23,12 @@ function CompletedItemMapping(props) {
     <Grid
       container
       direction="row"
-      justifyContent="center"
       alignContent="center"
       key={props.item.id}
+      sx={{
+        justifyContent: { xs: "space-around", md: "center" },
+        fontSize: { xs: "0.9rem" },
+      }}
     >
       <Grid item alignSelf="center">
         <LoadingButton
@@ -52,7 +55,7 @@ function CompletedItemMapping(props) {
           <ReplayRoundedIcon />
         </LoadingButton>
       </Grid>
-      <Grid item xs={6} ml={2}>
+      <Grid item xs={6} sx={{ overflowWrap: "break-word" }}>
         <p
           className={`${
             markAsPendingLoading || markAsDeletedLoading

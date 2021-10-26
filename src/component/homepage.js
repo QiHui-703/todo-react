@@ -58,11 +58,11 @@ function Homepage() {
       rowSpacing={6}
     >
       <Grid item>
-        <img src={Logo} style={{ width: "150px" }} alt="to do's logo"></img>
+        <img src={Logo} style={{ width: "7rem" }} alt="to do's logo"></img>
       </Grid>
 
       <Grid item>
-        <Grid container columnSpacing={12}>
+        <Grid container spacing={5}>
           <Grid item>
             <Button
               variant={formType === "existingUser" ? "contained" : "outlined"}
