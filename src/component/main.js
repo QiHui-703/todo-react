@@ -1,4 +1,10 @@
-import { Container, Grid, TextField, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Grid,
+  TextField,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "@mui/lab";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -155,7 +161,6 @@ function Main() {
               container
               sx={{
                 width: "100%",
-                maxWidth: "100%",
               }}
               justifyContent="center"
               alignItems="center"
@@ -207,7 +212,7 @@ function Main() {
         </Grid>
 
         {/* Open/Pending item */}
-        <Grid container direction="column">
+        <Grid container direction="column" sx={{ minHeight: "15vh" }}>
           <Grid container item direction="row" justifyContent="center">
             <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Open items</h3>
@@ -224,7 +229,7 @@ function Main() {
         </Grid>
 
         {/* Completed item */}
-        <Grid container direction="column">
+        <Grid container direction="column" sx={{ minHeight: "15vh" }}>
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Completed items</h3>
@@ -241,7 +246,7 @@ function Main() {
         </Grid>
 
         {/* Deleted item */}
-        <Grid container direction="column">
+        <Grid container direction="column" sx={{ minHeight: "15vh" }}>
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={12} md={8} mt={3} sx={{ fontSize: { xs: "0.9em" } }}>
               <h3 className={classes.categoryTitleStyle}>Deleted items</h3>
@@ -255,6 +260,20 @@ function Main() {
               ""
             );
           })}
+        </Grid>
+
+        <Grid
+          item
+          container
+          justifyContent="center"
+          alignContent="center"
+          sx={{
+            minHeight: "5vh",
+          }}
+        >
+          <Grid item pt={20} pb={10}>
+            <Typography>🌈 CREATED BY QI HUI 🌈</Typography>
+          </Grid>
         </Grid>
       </Grid>
     </Container>

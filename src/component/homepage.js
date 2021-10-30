@@ -31,7 +31,7 @@ function Homepage() {
   const [loading, setLoading] = useState(false);
   const [user, userLoading] = useAuthState(auth);
   const [isEmailFieldClicked, setIsEmailFieldClicked] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState();
   const [isPasswordFieldClicked, setIsPasswordFieldClicked] = useState(false);
   const [isPasswordInvalid, setIsPasswordInvalid] = useState();
 
@@ -53,16 +53,25 @@ function Homepage() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center"
-      sx={{ minHeight: "100vh" }}
+      sx={{
+        minHeight: "100vh",
+      }}
       rowSpacing={6}
     >
-      <Grid item>
+      <Grid item sx={{ alignSelf: "center" }}>
         <img src={Logo} style={{ width: "7rem" }} alt="to do's logo"></img>
       </Grid>
 
-      <Grid item>
-        <Grid container spacing={5}>
+      <Grid item container justifyContent="center">
+        <Grid
+          container
+          item
+          columnSpacing={1}
+          sx={{
+            width: { xs: "80%", md: "30%" },
+            justifyContent: "space-around",
+          }}
+        >
           <Grid item>
             <Button
               variant={formType === "existingUser" ? "contained" : "outlined"}
@@ -141,7 +150,7 @@ function Homepage() {
             <Grid item>
               <p>Email Address</p>
               <TextField
-                sx={{ minWidth: "20vw" }}
+                sx={{ minWidth: { xs: "60%", md: "20vw" } }}
                 autoComplete="off"
                 required
                 id="email-filled-required"
@@ -158,9 +167,11 @@ function Homepage() {
                 onChange={(e) => {
                   setEmailAddress(e.target.value);
                   setIsEmailValid(e.target.validity.valid);
-                }}
-                onClick={(e) => {
-                  setIsEmailFieldClicked(true);
+                  if (e.target.value.length !== 0) {
+                    setIsEmailFieldClicked(true);
+                  } else {
+                    setIsEmailFieldClicked(false);
+                  }
                 }}
               />
             </Grid>
@@ -168,7 +179,7 @@ function Homepage() {
             <Grid item>
               <p>Password</p>
               <TextField
-                sx={{ minWidth: "20vw" }}
+                sx={{ minWidth: { xs: "60%", md: "20vw" } }}
                 autoComplete="off"
                 required
                 id="password-filled-required"
@@ -185,7 +196,6 @@ function Homepage() {
                   let passwordLength = e.target.value.length;
                   console.log(passwordLength);
                   if (passwordLength < 6) {
-                    setIsPasswordFieldClicked(true);
                     setIsPasswordInvalid(true);
                   } else {
                     setIsPasswordInvalid(false);
