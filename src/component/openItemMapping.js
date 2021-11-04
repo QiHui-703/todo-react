@@ -71,7 +71,6 @@ function OpenItemMapping(props) {
           disabled={markAsCompletedLoading}
           loading={markAsDeletedLoading}
           onClick={async () => {
-            console.log("deleted");
             setMarkAsDeletedLoading(true);
             let uid = auth.currentUser?.uid;
             let itemDetailsReference = doc(

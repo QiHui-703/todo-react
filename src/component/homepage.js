@@ -1,5 +1,6 @@
 import { Button, Grid, TextField, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import _ from "lodash";
 
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -40,11 +41,6 @@ function Homepage() {
   useEffect(() => {
     if (user) {
       history.push("/main");
-    } else if (userLoading) {
-      console.log("is loading");
-      return;
-    } else {
-      console.log("no user found");
     }
   }, [user, userLoading]);
 
@@ -114,11 +110,11 @@ function Homepage() {
                   setLoading(false);
                 })
                 .catch((error) => {
-                  const errorCode = error.code;
-                  const errorMessage = error.message;
+                  const errorCode = error.code
+                    .replace("auth/", "")
+                    .replaceAll("-", " ");
+                  alert(_.upperFirst(errorCode));
                   setLoading(false);
-                  console.log(errorCode);
-                  console.log(errorMessage);
                 });
             }
             //new user register onSubmit
@@ -137,11 +133,11 @@ function Homepage() {
                   setLoading(false);
                 })
                 .catch((error) => {
-                  const errorCode = error.code;
-                  const errorMessage = error.message;
+                  const errorCode = error.code
+                    .replace("auth/", "")
+                    .replaceAll("-", " ");
+                  alert(_.upperFirst(errorCode));
                   setLoading(false);
-                  console.log(errorCode);
-                  console.log(errorMessage);
                 });
             }
           }}
@@ -194,7 +190,6 @@ function Homepage() {
                 onChange={(e) => {
                   setPassword(e.target.value);
                   let passwordLength = e.target.value.length;
-                  console.log(passwordLength);
                   if (passwordLength < 6) {
                     setIsPasswordInvalid(true);
                   } else {
@@ -229,11 +224,11 @@ function Homepage() {
                         setLoading(false);
                       })
                       .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
+                        const errorCode = error.code
+                          .replace("auth/", "")
+                          .replaceAll("-", " ");
+                        alert(_.upperFirst(errorCode));
                         setLoading(false);
-                        console.log(errorCode);
-                        console.log(errorMessage);
                       });
                   }}
                 >
@@ -242,6 +237,7 @@ function Homepage() {
               ) : (
                 //new user register onClick
                 <LoadingButton
+                  type="submit"
                   disabled={
                     !emailAddress ||
                     !isEmailValid ||
@@ -268,11 +264,11 @@ function Homepage() {
                         setLoading(false);
                       })
                       .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
+                        const errorCode = error.code
+                          .replace("auth/", "")
+                          .replaceAll("-", " ");
+                        alert(_.upperFirst(errorCode));
                         setLoading(false);
-                        console.log(errorCode);
-                        console.log(errorMessage);
                       });
                   }}
                 >

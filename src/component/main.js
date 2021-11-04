@@ -95,11 +95,7 @@ function Main() {
         });
         setFetchingData(false);
       });
-    } else if (loading) {
-      console.log("is loading");
-      return;
     } else {
-      console.log("no user found");
       history.push("/");
     }
   }, [user, loading]);
@@ -120,7 +116,6 @@ function Main() {
                   setSignOutLoading(false);
                 })
                 .catch((error) => {
-                  console.log(error);
                   setSignOutLoading(false);
                 });
             }}

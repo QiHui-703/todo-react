@@ -22,7 +22,6 @@ function DeletedItemMapping(props) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePopoverOpen = (event) => {
-    console.log(event);
     setAnchorEl(event.currentTarget);
   };
 
@@ -86,7 +85,6 @@ function DeletedItemMapping(props) {
           disabled={markAsPendingLoading}
           loading={markAsPermanentDeletedLoading}
           onClick={async () => {
-            console.log("permanently deleted");
             setMarkAsPermanentDeletedLoading(true);
             let uid = auth.currentUser?.uid;
             // let itemDetailsReference = doc(
