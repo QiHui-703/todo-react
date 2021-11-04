@@ -87,7 +87,7 @@ function OpenItemMapping(props) {
             setMarkAsDeletedLoading(false);
           }}
         >
-          <DeleteOutlineRoundedIcon small />
+          <DeleteOutlineRoundedIcon />
         </LoadingButton>
       </Grid>
     </Grid>
