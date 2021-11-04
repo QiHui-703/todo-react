@@ -1,4 +1,10 @@
-import { Button, Grid, TextField, CircularProgress } from "@mui/material";
+import {
+  Button,
+  Grid,
+  TextField,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import _ from "lodash";
 
@@ -35,6 +41,8 @@ function Homepage() {
   const [isEmailValid, setIsEmailValid] = useState();
   const [isPasswordFieldClicked, setIsPasswordFieldClicked] = useState(false);
   const [isPasswordInvalid, setIsPasswordInvalid] = useState();
+  const [authErrorMessage, setAuthErrorMessage] = useState("");
+  const [showAuthErrorMessage, setShowAuthErrorMessage] = useState(false);
 
   const history = useHistory();
 
@@ -109,12 +117,16 @@ function Homepage() {
                   history.push("/main");
                   setLoading(false);
                 })
-                .catch((error) => {
+                .catch(async (error) => {
                   const errorCode = error.code
                     .replace("auth/", "")
                     .replaceAll("-", " ");
-                  alert(_.upperFirst(errorCode));
+                  setAuthErrorMessage(_.upperFirst(errorCode));
+                  setShowAuthErrorMessage(true);
                   setLoading(false);
+                  await delay(3000);
+                  setAuthErrorMessage("");
+                  setShowAuthErrorMessage(false);
                 });
             }
             //new user register onSubmit
@@ -132,12 +144,16 @@ function Homepage() {
                   history.push("/main");
                   setLoading(false);
                 })
-                .catch((error) => {
+                .catch(async (error) => {
                   const errorCode = error.code
                     .replace("auth/", "")
                     .replaceAll("-", " ");
-                  alert(_.upperFirst(errorCode));
+                  setAuthErrorMessage(_.upperFirst(errorCode));
+                  setShowAuthErrorMessage(true);
                   setLoading(false);
+                  await delay(3000);
+                  setAuthErrorMessage("");
+                  setShowAuthErrorMessage(false);
                 });
             }
           }}
@@ -223,12 +239,16 @@ function Homepage() {
                         history.push("/main");
                         setLoading(false);
                       })
-                      .catch((error) => {
+                      .catch(async (error) => {
                         const errorCode = error.code
                           .replace("auth/", "")
                           .replaceAll("-", " ");
-                        alert(_.upperFirst(errorCode));
+                        setAuthErrorMessage(_.upperFirst(errorCode));
+                        setShowAuthErrorMessage(true);
                         setLoading(false);
+                        await delay(3000);
+                        setAuthErrorMessage("");
+                        setShowAuthErrorMessage(false);
                       });
                   }}
                 >
@@ -263,17 +283,29 @@ function Homepage() {
                         history.push("/main");
                         setLoading(false);
                       })
-                      .catch((error) => {
+                      .catch(async (error) => {
                         const errorCode = error.code
                           .replace("auth/", "")
                           .replaceAll("-", " ");
-                        alert(_.upperFirst(errorCode));
+                        setAuthErrorMessage(_.upperFirst(errorCode));
+                        setShowAuthErrorMessage(true);
                         setLoading(false);
+                        await delay(3000);
+                        setAuthErrorMessage("");
+                        setShowAuthErrorMessage(false);
                       });
                   }}
                 >
                   Register
                 </LoadingButton>
+              )}
+            </Grid>
+
+            <Grid item sx={{ width: "30rem" }} alignSelf="center">
+              {showAuthErrorMessage ? (
+                <Alert severity="error">{authErrorMessage}</Alert>
+              ) : (
+                <div />
               )}
             </Grid>
           </Grid>
