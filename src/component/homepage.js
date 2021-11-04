@@ -301,7 +301,7 @@ function Homepage() {
               )}
             </Grid>
 
-            <Grid item sx={{ width: "30rem" }} alignSelf="center">
+            <Grid item alignSelf="center">
               {showAuthErrorMessage ? (
                 <Alert severity="error">{authErrorMessage}</Alert>
               ) : (
