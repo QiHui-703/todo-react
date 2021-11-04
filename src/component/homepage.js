@@ -42,7 +42,7 @@ function Homepage() {
     if (user) {
       history.push("/main");
     }
-  }, [user, userLoading]);
+  }, [user, userLoading, history]);
 
   return !userLoading ? (
     <Grid

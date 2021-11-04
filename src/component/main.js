@@ -76,13 +76,14 @@ function Main() {
 
   //First time mapping after launching main page
   useEffect(() => {
+    let unsub;
     if (user) {
       let uid = auth.currentUser?.uid;
       const q = query(
         collection(db, `Users/${uid}/Todos`),
         orderBy("itemLastUpdatedDate", "desc")
       );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      unsub = onSnapshot(q, (querySnapshot) => {
         setFetchingData(true);
         let myArr = [];
         setTodos([]);
@@ -96,9 +97,11 @@ function Main() {
         setFetchingData(false);
       });
     } else {
+      unsub = () => {};
+      unsub();
       history.push("/");
     }
-  }, [user, loading]);
+  }, [user, loading, history]);
 
   return user && !fetchingData ? (
     <Container className={classes.root}>
